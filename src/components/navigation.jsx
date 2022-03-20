@@ -2,7 +2,7 @@ function Navigation(props) {
   return (
     <div className="weather__main-nav">
       <ul>
-        <li className="active" onClick={props.toggleTab}>
+        <li onClick={props.toggleTab}>
           <a href="#" className="weather__main-link">
             Now
           </a>
