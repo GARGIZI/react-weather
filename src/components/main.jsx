@@ -9,11 +9,7 @@ import Forecast from './forecast.jsx';
 function Main(props) {
   const data = props.data;
   const [cities, setCities] = useState([]);
-  const [tabs, setTabs] = useState({
-    now: true,
-    details: false,
-    forecast: false,
-  });
+  const [tabs, setTabs] = useState('now');
 
   function addFavoriteCity(e) {
     e.target.parentElement.classList.add('active');
@@ -30,10 +26,9 @@ function Main(props) {
     setCities(JSON.parse(localStorage.getItem('savedCities')));
   }, []);
 
-  useEffect(
-    () => [localStorage.setItem('savedCities', JSON.stringify(cities))],
-    [cities]
-  );
+  useEffect(() => {
+    [localStorage.setItem('savedCities', JSON.stringify(cities))];
+  }, [cities]);
 
   async function showInfo(e) {
     const cityName = e.target.textContent;
@@ -45,40 +40,16 @@ function Main(props) {
 
   function toggleTab(e) {
     const tab = e.target.textContent.toLowerCase();
-
-    switch (tab) {
-      case 'now':
-        setTabs({
-          now: true,
-          details: false,
-          forecast: false,
-        });
-        break;
-      case 'details':
-        setTabs({
-          now: false,
-          details: true,
-          forecast: false,
-        });
-        break;
-      case 'forecast':
-        setTabs({
-          now: false,
-          details: false,
-          forecast: true,
-        });
-        break;
-    }
+    setTabs(tab);
   }
 
-  // почему нельзя написать {<Now data={props.data} addFavoriteCity={addFavoriteCity}></Now> && tabs.now} ?
   return (
     <div className="weather__main">
-      {tabs.now ? (
+      {tabs == 'now' ? (
         <Now data={props.data} addFavoriteCity={addFavoriteCity}></Now>
       ) : null}
-      {tabs.details ? <Details data={props.data}></Details> : null}
-      {tabs.forecast ? (
+      {tabs == 'details' ? <Details data={props.data}></Details> : null}
+      {tabs == 'forecast' ? (
         <Forecast data={props.data} listCities={cities}></Forecast>
       ) : null}
       <FavoriteCities listCities={cities} showInfo={showInfo}></FavoriteCities>
