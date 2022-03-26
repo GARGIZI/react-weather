@@ -1,33 +1,41 @@
 import Now from '../components/now.jsx';
 import FavoriteCities from './favoriteCities.jsx';
 import { useState, useEffect } from 'react';
-import sendRequest from '../sendRequest.js';
+import { useDispatch, useSelector } from 'react-redux';
 import Details from './details.jsx';
 import Navigation from './navigation.jsx';
 import Forecast from './forecast.jsx';
+import { addFavoriteCity } from '../actions.jsx';
 
 function Main(props) {
-  const data = props.data;
-  const [cities, setCities] = useState([]);
+  let cities = useSelector((state) => state.cities);
+  let data = useSelector((state) => state.dataCity);
+  console.log(cities);
+  console.log(data);
+  const dispatch = useDispatch();
   const [tabs, setTabs] = useState('now');
 
-  function addFavoriteCity(e) {
-    e.target.parentElement.classList.add('active');
-    const isCheck = cities.includes(data.name);
+  function addFavCity() {
+    const nameCity = data.name;
+    const isCheck = cities.includes(nameCity);
+
     if (isCheck) {
       alert('Такой город уже есть в вашем списке');
       return;
     }
 
-    setCities([...cities, data.name]);
+    dispatch(addFavoriteCity(nameCity));
   }
 
   useEffect(() => {
-    setCities(JSON.parse(localStorage.getItem('savedCities')));
+    const savedCities = JSON.parse(localStorage.getItem('savedCities')) || [];
+    savedCities.forEach((item) => {
+      dispatch(addFavoriteCity(item));
+    });
   }, []);
 
   useEffect(() => {
-    [localStorage.setItem('savedCities', JSON.stringify(cities))];
+    localStorage.setItem('savedCities', JSON.stringify(cities));
   }, [cities]);
 
   async function showInfo(e) {
@@ -45,12 +53,10 @@ function Main(props) {
 
   return (
     <div className="weather__main">
-      {tabs == 'now' ? (
-        <Now data={props.data} addFavoriteCity={addFavoriteCity}></Now>
-      ) : null}
-      {tabs == 'details' ? <Details data={props.data}></Details> : null}
+      {tabs == 'now' ? <Now data={data} addFavCity={addFavCity}></Now> : null}
+      {tabs == 'details' ? <Details data={data}></Details> : null}
       {tabs == 'forecast' ? (
-        <Forecast data={props.data} listCities={cities}></Forecast>
+        <Forecast data={data} listCities={cities}></Forecast>
       ) : null}
       <FavoriteCities listCities={cities} showInfo={showInfo}></FavoriteCities>
       <Navigation toggleTab={toggleTab}></Navigation>

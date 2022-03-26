@@ -13,10 +13,7 @@ function Now(props) {
         <div className="weather__weather-city weather">
           {data.name || 'City'}
         </div>
-        <button
-          className="weather__weather-like"
-          onClick={props.addFavoriteCity}
-        >
+        <button className="weather__weather-like" onClick={props.addFavCity}>
           <svg
             width="24"
             height="25"
