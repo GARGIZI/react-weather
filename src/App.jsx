@@ -1,6 +1,6 @@
 import Form from './components/form.jsx';
 import Main from './components/main.jsx';
-import { asyncRequestStore } from './asyncActions';
+import sendRequest from './asyncActions';
 import { useDispatch } from 'react-redux';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
     e.preventDefault;
     const input = e.target;
     if (e.key === 'Enter' && e.key !== '') {
-      dispatch(asyncRequestStore(input.value));
+      dispatch(sendRequest(input.value));
     }
   }
 

@@ -6,12 +6,11 @@ import Details from './details.jsx';
 import Navigation from './navigation.jsx';
 import Forecast from './forecast.jsx';
 import { addFavoriteCity } from '../actions.jsx';
+import sendRequest from '../asyncActions';
 
-function Main(props) {
-  let cities = useSelector((state) => state.cities);
-  let data = useSelector((state) => state.dataCity);
-  console.log(cities);
-  console.log(data);
+function Main() {
+  let cities = useSelector((state) => state.weather.cities);
+  let data = useSelector((state) => state.data.dataCity);
   const dispatch = useDispatch();
   const [tabs, setTabs] = useState('now');
 
@@ -28,7 +27,7 @@ function Main(props) {
   }
 
   useEffect(() => {
-    const savedCities = JSON.parse(localStorage.getItem('savedCities')) || [];
+    const savedCities = JSON.parse(localStorage.getItem('savedCities'));
     savedCities.forEach((item) => {
       dispatch(addFavoriteCity(item));
     });
@@ -39,11 +38,7 @@ function Main(props) {
   }, [cities]);
 
   async function showInfo(e) {
-    const cityName = e.target.textContent;
-    const request = sendRequest(cityName);
-    const response = await (await request).json();
-
-    props.useData(response);
+    dispatch(sendRequest(e.target.parentElement.id));
   }
 
   function toggleTab(e) {
